@@ -14,7 +14,6 @@ body {
   padding: 2rem 1.5rem;
 }
 .page { max-width: 720px; margin: 0 auto; }
-
 .header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 0.5px solid rgba(255,255,255,0.1); }
 .pause-symbol { display: flex; align-items: center; justify-content: center; gap: 5px; width: 48px; height: 48px; flex-shrink: 0; }
 .pause-bar { width: 10px; height: 32px; background: #7ecec4; border-radius: 2px; }
@@ -26,49 +25,41 @@ body {
 .weather-icon { font-size: 16px; }
 .weather-temp { font-size: 13px; color: #c8e8e4; }
 .weather-desc { font-size: 11px; color: #4a8a84; }
-
 .focus-box { background: #162630; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; border: 0.5px solid rgba(126,206,196,0.2); }
 .focus-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #4a8a84; margin-bottom: 6px; }
 .focus-text { font-size: 15px; color: #c8e8e4; font-weight: 500; }
 .focus-edit { font-size: 12px; color: #4a7a74; margin-top: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
 .focus-edit:hover { color: #7ecec4; }
 .focus-input { display: none; width: 100%; margin-top: 6px; font-size: 14px; background: #0f1923; color: #c8e8e4; border: 0.5px solid rgba(126,206,196,0.3); border-radius: 6px; padding: 6px 8px; font-family: inherit; }
-
 .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #3a6a64; margin-bottom: 8px; margin-top: 1.25rem; }
-.grid-wide { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; }
-
+.grid-wide { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+@media (max-width: 480px) { .grid-wide { grid-template-columns: repeat(2, 1fr); } }
 .tile { background: #162e3a; border: 0.5px solid rgba(126,206,196,0.15); border-radius: 12px; padding: 0.875rem 1rem; cursor: pointer; transition: border-color 0.15s, background 0.15s; text-decoration: none; display: block; }
 .tile:hover { background: #1c3845; border-color: rgba(126,206,196,0.35); }
 .tile-icon { font-size: 20px; color: #7ecec4; margin-bottom: 6px; }
 .tile-name { font-size: 13px; font-weight: 500; color: #c8e8e4; }
 .tile-sub { font-size: 11px; color: #4a8a84; margin-top: 2px; }
-
 .tile-active { background: #0d2d3a; border-left: 3px solid #7ecec4; border-radius: 0 12px 12px 0; }
 .tile-active .tile-icon { color: #a0ddd8; }
-
 .tile-urgent { background: #2a1518; border: 0.5px solid rgba(200,80,60,0.4); }
 .tile-urgent:hover { background: #331a1d; border-color: rgba(200,80,60,0.6); }
 .tile-urgent .tile-icon { color: #c8503c; }
 .tile-urgent .tile-name { color: #e8c0b8; }
 .tile-urgent .tile-sub { color: #a04030; }
-
 .tile-green { background: #0f2318; border: 0.5px solid rgba(80,180,100,0.25); }
 .tile-green:hover { background: #142b1e; border-color: rgba(80,180,100,0.45); }
 .tile-green .tile-icon { color: #5ab870; }
 .tile-green .tile-name { color: #b8e0c0; }
 .tile-green .tile-sub { color: #3a7a4a; }
-
 .quick-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .ql { font-size: 12px; color: #7ecec4; background: #162630; border: 0.5px solid rgba(126,206,196,0.2); border-radius: 20px; padding: 4px 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: border-color 0.15s, color 0.15s; }
 .ql:hover { border-color: rgba(126,206,196,0.5); color: #a0ddd8; }
 .ql i { font-size: 13px; }
-
 .divider { height: 0.5px; background: rgba(255,255,255,0.07); margin: 1.25rem 0; }
 </style>
 </head>
 <body>
 <div class="page">
-
   <div class="header">
     <div class="pause-symbol">
       <div class="pause-bar"></div>
@@ -87,14 +78,12 @@ body {
       </div>
     </div>
   </div>
-
   <div class="focus-box">
     <div class="focus-label">Mein aktueller Fokus</div>
     <div class="focus-text" id="focus-display">Plan D voranbringen — mindestens 1 Arbeitseinheit pro Woche.</div>
     <span class="focus-edit" onclick="editFocus()"><i class="ti ti-edit"></i> bearbeiten</span>
     <input class="focus-input" id="focus-input" type="text" onkeydown="saveFocus(event)" placeholder="Aktueller Fokus...">
   </div>
-
   <div class="section-label">Meine Projekte</div>
   <div class="grid-wide">
     <a class="tile tile-green" href="https://claude.ai">
@@ -143,9 +132,7 @@ body {
       <div class="tile-sub">Viszerales Bauchfett abbauen</div>
     </a>
   </div>
-
   <div class="divider"></div>
-
   <div class="section-label">Schnellzugriff</div>
   <div class="quick-links">
     <a class="ql" href="https://to-do.live.com/tasks/"><i class="ti ti-check"></i> To-Do</a>
@@ -154,9 +141,7 @@ body {
     <a class="ql" href="https://drive.google.com"><i class="ti ti-brand-google-drive"></i> Google Drive</a>
     <a class="ql" href="https://sheets.google.com"><i class="ti ti-table"></i> Google Tabellen</a>
   </div>
-
 </div>
-
 <script>
 function pad(n) { return n < 10 ? '0'+n : n; }
 function updateClock() {
@@ -165,7 +150,6 @@ function updateClock() {
 }
 updateClock();
 setInterval(updateClock, 30000);
-
 const wmoIcons = {
   0:'☀️',1:'🌤️',2:'⛅',3:'☁️',
   45:'🌫️',48:'🌫️',
@@ -175,7 +159,6 @@ const wmoIcons = {
   80:'🌦️',81:'🌧️',82:'⛈️',
   95:'⛈️',96:'⛈️',99:'⛈️'
 };
-
 async function loadWeather() {
   try {
     const geo = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=Heidelberg&count=1&language=de&format=json');
@@ -201,18 +184,16 @@ async function loadWeather() {
     const worstCode = relevant.reduce((max,r) => r.code > max ? r.code : max, 0);
     document.getElementById('w-icon').textContent = wmoIcons[worstCode] || '🌡️';
     document.getElementById('w-temp').textContent = avgTemp + '°C';
-    document.getElementById('w-desc').textContent = 'Heidelberg · 4h';
+    document.getElementById('w-desc').textContent = 'nächste 4h';
   } catch(e) {
     document.getElementById('w-icon').textContent = '—';
     document.getElementById('w-desc').textContent = 'nicht verfügbar';
   }
 }
 loadWeather();
-
 const FOCUS_KEY = 'florian_focus';
 const saved = localStorage.getItem(FOCUS_KEY);
 if (saved) document.getElementById('focus-display').textContent = saved;
-
 function editFocus() {
   const d = document.getElementById('focus-display');
   const i = document.getElementById('focus-input');
