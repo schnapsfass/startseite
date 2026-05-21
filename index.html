@@ -184,7 +184,7 @@ async function loadWeather() {
     const worstCode = relevant.reduce((max,r) => r.code > max ? r.code : max, 0);
     document.getElementById('w-icon').textContent = wmoIcons[worstCode] || '🌡️';
     document.getElementById('w-temp').textContent = avgTemp + '°C';
-    document.getElementById('w-desc').textContent = 'nächste 4h';
+    document.getElementById('w-desc').textContent = '>4h';
   } catch(e) {
     document.getElementById('w-icon').textContent = '—';
     document.getElementById('w-desc').textContent = 'nicht verfügbar';
