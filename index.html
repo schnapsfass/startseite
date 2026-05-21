@@ -24,7 +24,7 @@ body {
 .weather-strip { display: flex; align-items: center; gap: 6px; }
 .weather-icon { font-size: 16px; }
 .weather-temp { font-size: 13px; color: #c8e8e4; }
-.weather-desc { font-size: 11px; color: #4a8a84; }
+.weather-desc { display: none; }
 .focus-box { background: #162630; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; border: 0.5px solid rgba(126,206,196,0.2); }
 .focus-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #4a8a84; margin-bottom: 6px; }
 .focus-text { font-size: 15px; color: #c8e8e4; font-weight: 500; }
@@ -184,10 +184,8 @@ async function loadWeather() {
     const worstCode = relevant.reduce((max,r) => r.code > max ? r.code : max, 0);
     document.getElementById('w-icon').textContent = wmoIcons[worstCode] || '🌡️';
     document.getElementById('w-temp').textContent = avgTemp + '°C';
-    document.getElementById('w-desc').textContent = '>4h';
   } catch(e) {
     document.getElementById('w-icon').textContent = '—';
-    document.getElementById('w-desc').textContent = 'nicht verfügbar';
   }
 }
 loadWeather();
