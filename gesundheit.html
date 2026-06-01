@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gesundheit · Florian</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%230f2318'/><rect x='10' y='9' width='4' height='14' rx='1.5' fill='%235ab870'/><rect x='18' y='9' width='4' height='14' rx='1.5' fill='%235ab870'/></svg>">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #0f1923;
+  min-height: 100vh;
+  padding: 2rem 1.5rem 3rem;
+}
+.page { max-width: 720px; margin: 0 auto; }
+
+.header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 0.5px solid rgba(255,255,255,0.1); }
+.back { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #5ab870; text-decoration: none; flex-shrink: 0; }
+.back:hover { color: #7ecec4; }
+.header-text h1 { font-size: 18px; font-weight: 500; color: #e8f4f2; }
+.header-text p { font-size: 13px; color: #7a9e99; margin-top: 3px; }
+
+.section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #3a6a64; margin-bottom: 12px; margin-top: 1.5rem; }
+.divider { height: 0.5px; background: rgba(255,255,255,0.07); margin: 1.5rem 0; }
+
+.video-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+@media (max-width: 500px) { .video-grid { grid-template-columns: 1fr; } }
+
+.video-card {
+  background: #162e3a;
+  border: 0.5px solid rgba(126,206,196,0.15);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.video-thumb {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  background: #0f1923;
+}
+.video-thumb iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border: none;
+}
+.video-thumb-placeholder {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 8px; color: #3a6a64; font-size: 12px;
+  background: #0d1f2a;
+}
+.video-thumb-placeholder i { font-size: 28px; color: #2a5a54; }
+.video-info { padding: 10px 12px; }
+.video-title { font-size: 13px; font-weight: 500; color: #c8e8e4; line-height: 1.4; }
+.video-sub { font-size: 11px; color: #4a8a84; margin-top: 3px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <a class="back" href="index.html"><i class="ti ti-arrow-left"></i> Zurück</a>
+    <div class="header-text">
+      <h1>Gesundheit</h1>
+      <p>Bewegung · Ernährung · Wohlbefinden</p>
+    </div>
+  </div>
+
+  <!-- Ernährung -->
+  <div class="section-label">Ernährung</div>
+  <div class="video-grid">
+    <div class="video-card">
+      <div class="video-thumb">
+        <iframe src="https://www.youtube.com/embed/bH0ZYcV-yi4" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-info">
+        <div class="video-title">Ernährung & Gesundheit</div>
+        <div class="video-sub">YouTube</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Brusttraining -->
+  <div class="section-label">Brusttraining</div>
+  <div class="video-grid">
+    <div class="video-card">
+      <div class="video-thumb">
+        <div class="video-thumb-placeholder">
+          <i class="ti ti-video-off"></i>
+          <span>Video folgt — bitte hochladen</span>
+        </div>
+      </div>
+      <div class="video-info">
+        <div class="video-title">Brusttraining</div>
+        <div class="video-sub">Lokales Video — Upload ausstehend</div>
+      </div>
+    </div>
+    <div class="video-card">
+      <div class="video-thumb">
+        <iframe src="https://www.youtube.com/embed/wZ7ZzalCI4k" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-info">
+        <div class="video-title">Brusttraining</div>
+        <div class="video-sub">YouTube</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
