@@ -118,7 +118,7 @@ body {
 .tile-name { font-size: 13px; font-weight: 500; color: #c8e8e4; }
 .tile-sub { font-size: 11px; color: #4a8a84; margin-top: 2px; line-height: 1.4; }
 
-.tile-active { background: #0d2d3a; border-left: 3px solid #7ecec4; border-radius: 0 12px 12px 0; }
+.tile-idea { background: #0d2d3a; border-left: 3px solid #7ecec4; border-radius: 0 12px 12px 0; }
 .tile-urgent { background: #2a1518; border: 0.5px solid rgba(200,80,60,0.4); }
 .tile-urgent:hover { background: #331a1d; border-color: rgba(200,80,60,0.6); }
 .tile-urgent .tile-icon { color: #c8503c; }
@@ -245,37 +245,63 @@ body {
     </div>
   </div>
 
-  <!-- Persönlicher Manager — volle Breite -->
-  <div class="meta-tile tile-green" style="display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem;border-radius:12px;padding:1rem 1.25rem;border:0.5px solid rgba(80,180,100,0.25);background:#0f2318;">
-    <div style="font-size:26px;color:#5ab870;flex-shrink:0;"><i class="ti ti-layout-dashboard"></i></div>
+<!-- Persönlicher Manager — volle Breite -->
+  <div class="meta-tile tile-green" id="meta-pm" style="display:flex;align-items:flex-start;gap:1rem;margin-bottom:0.75rem;border-radius:12px;padding:1rem 1.25rem;border:0.5px solid rgba(80,180,100,0.25);background:#0f2318;position:relative;" onmouseenter="this.querySelector('.meta-btn-bar').style.display='flex'" onmouseleave="this.querySelector('.meta-btn-bar').style.display='none'">
+    <div style="font-size:26px;color:#5ab870;flex-shrink:0;margin-top:2px;"><i class="ti ti-layout-dashboard"></i></div>
     <div style="flex:1;min-width:0;">
-      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#3a7a4a;margin-bottom:3px;">Meta-Projekt</div>
-      <div style="font-size:15px;font-weight:500;color:#b8e0c0;">Persönlicher Manager</div>
-      <div id="pm-sub-display" style="font-size:12px;color:#3a7a4a;margin-top:2px;min-height:18px;cursor:pointer;" onclick="editPmSub()" title="bearbeiten">⋯</div>
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#3a7a4a;margin-bottom:3px;">Meta-Projekt · Laufend</div>
+      <div class="meta-title" style="font-size:15px;font-weight:500;color:#b8e0c0;">Persönlicher Manager</div>
+      <div id="pm-sub-display" style="font-size:12px;color:#3a7a4a;margin-top:2px;min-height:18px;cursor:pointer;" onclick="editPmSub()" title="Fokus bearbeiten">⋯</div>
       <input id="pm-sub-input" type="text" onkeydown="savePmSub(event)" placeholder="Nächster Schritt..." style="display:none;width:100%;margin-top:4px;font-size:12px;background:#0f1923;color:#b8e0c0;border:0.5px solid rgba(80,180,100,0.3);border-radius:6px;padding:5px 8px;font-family:inherit;">
+      <div class="meta-edit-panel" style="display:none;margin-top:10px;border-top:0.5px solid rgba(80,180,100,0.15);padding-top:8px;">
+        <input class="meta-ep-title" placeholder="Titel" value="Persönlicher Manager" style="width:100%;font-size:11px;background:#0f1923;color:#b8e0c0;border:0.5px solid rgba(80,180,100,0.2);border-radius:4px;padding:4px 6px;margin-bottom:4px;font-family:inherit;">
+        <input class="meta-ep-href" placeholder="URL" value="https://claude.ai" style="width:100%;font-size:11px;background:#0f1923;color:#b8e0c0;border:0.5px solid rgba(80,180,100,0.2);border-radius:4px;padding:4px 6px;margin-bottom:6px;font-family:inherit;">
+        <button onclick="applyMetaEdit('pm')" style="width:100%;font-size:11px;background:rgba(80,180,100,0.1);color:#5ab870;border:0.5px solid rgba(80,180,100,0.3);border-radius:4px;padding:4px;cursor:pointer;font-family:inherit;">Übernehmen</button>
+      </div>
     </div>
-    <a href="https://claude.ai" target="_blank" rel="noopener" style="font-size:12px;color:#3a7a4a;white-space:nowrap;text-decoration:none;flex-shrink:0;">Startpunkt <i class="ti ti-arrow-right" style="font-size:12px;vertical-align:-1px;"></i></a>
+    <div class="meta-btn-bar" style="display:none;gap:4px;align-items:center;flex-shrink:0;">
+      <button onclick="openMetaLink('pm')" title="Link öffnen" style="width:22px;height:22px;background:rgba(15,25,35,0.75);border:none;border-radius:4px;color:#5ab870;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="ti ti-external-link"></i></button>
+      <button onclick="toggleMetaEdit('pm')" title="Bearbeiten" style="width:22px;height:22px;background:rgba(15,25,35,0.75);border:none;border-radius:4px;color:#5ab870;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="ti ti-edit"></i></button>
+    </div>
   </div>
 
   <!-- BAQ Fokus — als Kachel -->
-  <div class="meta-tile tile-blue" style="display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem;border-radius:12px;padding:1rem 1.25rem;border:0.5px solid rgba(60,140,220,0.3);background:#0f1f2e;">
-    <div style="font-size:26px;color:#5aa8e8;flex-shrink:0;"><i class="ti ti-building"></i></div>
+  <div class="meta-tile tile-blue" id="meta-baq" style="display:flex;align-items:flex-start;gap:1rem;margin-bottom:0.75rem;border-radius:12px;padding:1rem 1.25rem;border:0.5px solid rgba(60,140,220,0.3);background:#0f1f2e;position:relative;" onmouseenter="this.querySelector('.meta-btn-bar').style.display='flex'" onmouseleave="this.querySelector('.meta-btn-bar').style.display='none'">
+    <div style="font-size:26px;color:#5aa8e8;flex-shrink:0;margin-top:2px;"><i class="ti ti-building"></i></div>
     <div style="flex:1;min-width:0;">
-      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#3a6a9a;margin-bottom:3px;">Meta-Projekt</div>
-      <div style="font-size:15px;font-weight:500;color:#b8d8f0;">Persönlicher Manager · BAQ</div>
-      <div id="focus-baq-display" style="font-size:12px;color:#3a6a9a;margin-top:2px;min-height:18px;cursor:pointer;" onclick="editFocusBaq()" title="bearbeiten">⋯</div>
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#3a6a9a;margin-bottom:3px;">Meta-Projekt · BAQ</div>
+      <div class="meta-title" style="font-size:15px;font-weight:500;color:#b8d8f0;">Persönlicher Manager · BAQ</div>
+      <div id="focus-baq-display" style="font-size:12px;color:#3a6a9a;margin-top:2px;min-height:18px;cursor:pointer;" onclick="editFocusBaq()" title="Fokus bearbeiten">⋯</div>
       <input id="focus-baq-input" type="text" onkeydown="saveFocusBaq(event)" placeholder="BAQ Fokus..." style="display:none;width:100%;margin-top:4px;font-size:12px;background:#0f1923;color:#b8d8f0;border:0.5px solid rgba(60,140,220,0.3);border-radius:6px;padding:5px 8px;font-family:inherit;">
+      <div class="meta-edit-panel" style="display:none;margin-top:10px;border-top:0.5px solid rgba(60,140,220,0.15);padding-top:8px;">
+        <input class="meta-ep-title" placeholder="Titel" value="Persönlicher Manager · BAQ" style="width:100%;font-size:11px;background:#0f1923;color:#b8d8f0;border:0.5px solid rgba(60,140,220,0.2);border-radius:4px;padding:4px 6px;margin-bottom:4px;font-family:inherit;">
+        <input class="meta-ep-href" placeholder="URL" value="" style="width:100%;font-size:11px;background:#0f1923;color:#b8d8f0;border:0.5px solid rgba(60,140,220,0.2);border-radius:4px;padding:4px 6px;margin-bottom:6px;font-family:inherit;">
+        <button onclick="applyMetaEdit('baq')" style="width:100%;font-size:11px;background:rgba(60,140,220,0.1);color:#5aa8e8;border:0.5px solid rgba(60,140,220,0.3);border-radius:4px;padding:4px;cursor:pointer;font-family:inherit;">Übernehmen</button>
+      </div>
+    </div>
+    <div class="meta-btn-bar" style="display:none;gap:4px;align-items:center;flex-shrink:0;">
+      <button onclick="openMetaLink('baq')" title="Link öffnen" style="width:22px;height:22px;background:rgba(15,25,35,0.75);border:none;border-radius:4px;color:#5aa8e8;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="ti ti-external-link"></i></button>
+      <button onclick="toggleMetaEdit('baq')" title="Bearbeiten" style="width:22px;height:22px;background:rgba(15,25,35,0.75);border:none;border-radius:4px;color:#5aa8e8;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="ti ti-edit"></i></button>
     </div>
   </div>
 
   <!-- Fokus — als Kachel -->
-  <div class="meta-tile" style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;border-radius:12px;padding:1rem 1.25rem;border:0.5px solid rgba(126,206,196,0.2);background:#162630;">
-    <div style="font-size:26px;color:#7ecec4;flex-shrink:0;"><i class="ti ti-focus-2"></i></div>
+  <div class="meta-tile" id="meta-fokus" style="display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.5rem;border-radius:12px;padding:1rem 1.25rem;border:0.5px solid rgba(126,206,196,0.2);background:#162630;position:relative;" onmouseenter="this.querySelector('.meta-btn-bar').style.display='flex'" onmouseleave="this.querySelector('.meta-btn-bar').style.display='none'">
+    <div style="font-size:26px;color:#7ecec4;flex-shrink:0;margin-top:2px;"><i class="ti ti-focus-2"></i></div>
     <div style="flex:1;min-width:0;">
-      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#4a8a84;margin-bottom:3px;">Meta-Projekt</div>
-      <div style="font-size:15px;font-weight:500;color:#c8e8e4;">Persönlicher Manager · Fokus</div>
-      <div id="focus-display" style="font-size:12px;color:#4a8a84;margin-top:2px;min-height:18px;cursor:pointer;" onclick="editFocus()" title="bearbeiten">⋯</div>
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#4a8a84;margin-bottom:3px;">Meta-Projekt · Fokus</div>
+      <div class="meta-title" style="font-size:15px;font-weight:500;color:#c8e8e4;">Persönlicher Manager · Fokus</div>
+      <div id="focus-display" style="font-size:12px;color:#4a8a84;margin-top:2px;min-height:18px;cursor:pointer;" onclick="editFocus()" title="Fokus bearbeiten">⋯</div>
       <input id="focus-input" type="text" onkeydown="saveFocus(event)" placeholder="Aktueller Fokus..." style="display:none;width:100%;margin-top:4px;font-size:12px;background:#0f1923;color:#c8e8e4;border:0.5px solid rgba(126,206,196,0.3);border-radius:6px;padding:5px 8px;font-family:inherit;">
+      <div class="meta-edit-panel" style="display:none;margin-top:10px;border-top:0.5px solid rgba(126,206,196,0.15);padding-top:8px;">
+        <input class="meta-ep-title" placeholder="Titel" value="Persönlicher Manager · Fokus" style="width:100%;font-size:11px;background:#0f1923;color:#c8e8e4;border:0.5px solid rgba(126,206,196,0.2);border-radius:4px;padding:4px 6px;margin-bottom:4px;font-family:inherit;">
+        <input class="meta-ep-href" placeholder="URL" value="" style="width:100%;font-size:11px;background:#0f1923;color:#c8e8e4;border:0.5px solid rgba(126,206,196,0.2);border-radius:4px;padding:4px 6px;margin-bottom:6px;font-family:inherit;">
+        <button onclick="applyMetaEdit('fokus')" style="width:100%;font-size:11px;background:rgba(126,206,196,0.1);color:#7ecec4;border:0.5px solid rgba(126,206,196,0.3);border-radius:4px;padding:4px;cursor:pointer;font-family:inherit;">Übernehmen</button>
+      </div>
+    </div>
+    <div class="meta-btn-bar" style="display:none;gap:4px;align-items:center;flex-shrink:0;">
+      <button onclick="openMetaLink('fokus')" title="Link öffnen" style="width:22px;height:22px;background:rgba(15,25,35,0.75);border:none;border-radius:4px;color:#7ecec4;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="ti ti-external-link"></i></button>
+      <button onclick="toggleMetaEdit('fokus')" title="Bearbeiten" style="width:22px;height:22px;background:rgba(15,25,35,0.75);border:none;border-radius:4px;color:#7ecec4;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="ti ti-edit"></i></button>
     </div>
   </div>
 
@@ -295,7 +321,7 @@ body {
       </button>
       <div class="cat-dropdown" id="dropdown-big">
         <div class="cat-option" onclick="selectCat('big','','Geplant','#4a6a7a')"><span class="cat-dot" style="background:#4a6a7a;"></span> Geplant</div>
-        <div class="cat-option" onclick="selectCat('big','tile-active','Aktiv','#7ecec4')"><span class="cat-dot" style="background:#7ecec4;"></span> Aktiv</div>
+        <div class="cat-option" onclick="selectCat('big','tile-idea','Idee','#7ecec4')"><span class="cat-dot" style="background:#7ecec4;"></span> Idee</div>
         <div class="cat-option" onclick="selectCat('big','tile-urgent','Dringend','#c8503c')"><span class="cat-dot" style="background:#c8503c;"></span> Dringend</div>
         <div class="cat-option" onclick="selectCat('big','tile-green','Laufend','#5ab870')"><span class="cat-dot" style="background:#5ab870;"></span> Laufend</div>
         <div class="cat-option" onclick="selectCat('big','tile-blue','BAQ','#5aa8e8')"><span class="cat-dot" style="background:#5aa8e8;"></span> BAQ</div>
@@ -323,6 +349,7 @@ body {
       </button>
       <div class="cat-dropdown" id="dropdown-small">
         <div class="cat-option" onclick="selectCat('small','','Geplant','#4a6a7a')"><span class="cat-dot" style="background:#4a6a7a;"></span> Geplant</div>
+        <div class="cat-option" onclick="selectCat('small','tile-idea','Idee','#7ecec4')"><span class="cat-dot" style="background:#7ecec4;"></span> Idee</div>
         <div class="cat-option" onclick="selectCat('small','tile-urgent','Dringend','#c8503c')"><span class="cat-dot" style="background:#c8503c;"></span> Dringend</div>
         <div class="cat-option" onclick="selectCat('small','tile-green','Laufend','#5ab870')"><span class="cat-dot" style="background:#5ab870;"></span> Laufend</div>
         <div class="cat-option" onclick="selectCat('small','tile-blue','BAQ','#5aa8e8')"><span class="cat-dot" style="background:#5aa8e8;"></span> BAQ</div>
@@ -350,7 +377,7 @@ body {
       </button>
       <div class="cat-dropdown" id="dropdown-ideas">
         <div class="cat-option" onclick="selectCat('ideas','','Geplant','#4a6a7a')"><span class="cat-dot" style="background:#4a6a7a;"></span> Geplant</div>
-        <div class="cat-option" onclick="selectCat('ideas','tile-active','Aktiv','#7ecec4')"><span class="cat-dot" style="background:#7ecec4;"></span> Aktiv</div>
+        <div class="cat-option" onclick="selectCat('ideas','tile-idea','Idee','#7ecec4')"><span class="cat-dot" style="background:#7ecec4;"></span> Idee</div>
         <div class="cat-option" onclick="selectCat('ideas','tile-green','Laufend','#5ab870')"><span class="cat-dot" style="background:#5ab870;"></span> Laufend</div>
         <div class="cat-option" onclick="selectCat('ideas','tile-blue','BAQ','#5aa8e8')"><span class="cat-dot" style="background:#5aa8e8;"></span> BAQ</div>
       </div>
@@ -736,6 +763,21 @@ function saveFocus(e){
     d.style.display='block'; i.style.display='none';
   }
 }
+function toggleMetaEdit(id) {
+  const panel = document.querySelector('#meta-' + id + ' .meta-edit-panel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+function openMetaLink(id) {
+  const href = document.querySelector('#meta-' + id + ' .meta-ep-href').value;
+  if (href) window.open(href, '_blank', 'noopener');
+}
+function applyMetaEdit(id) {
+  const el = document.getElementById('meta-' + id);
+  const title = el.querySelector('.meta-ep-title').value.trim();
+  const panel = el.querySelector('.meta-edit-panel');
+  if (title) el.querySelector('.meta-title').textContent = title;
+  panel.style.display = 'none';
+}
 function editFocusBaq(){
   const d=document.getElementById('focus-baq-display'),i=document.getElementById('focus-baq-input');
   i.value=d.textContent==='⋯'?'':d.textContent; d.style.display='none'; i.style.display='block'; i.focus();
@@ -765,7 +807,7 @@ function savePmSub(e){
 
 /* ── Kachel-Daten ── */
 const defaultBig=[
-  {name:'Plan D — Manifest',sub:'Deutschland. Endlich wieder wach.',icon:'ti-book-2',type:'tile-active',href:'https://drive.google.com/drive/folders/1YRtCnn8Z6BW5CxaBeErnM9t7v5CvX9xO?usp=drive_link'},
+  {name:'Plan D — Manifest',sub:'Deutschland. Endlich wieder wach.',icon:'ti-book-2',type:'tile-idea',href:'https://drive.google.com/drive/folders/1YRtCnn8Z6BW5CxaBeErnM9t7v5CvX9xO?usp=drive_link'},
   {name:'1000 Fahrten für Ronja',sub:'⚠ Medien kontaktieren — jetzt!',icon:'ti-train',type:'tile-urgent',href:'https://drive.google.com/drive/folders/1PttL5fdHvKwbamwHYhkPBT-f2ukwTW1L?usp=drive_link'},
   {name:'BAQ-MAP',sub:'Arbeitgeber auf Landkarte',icon:'ti-map-pin',type:'tile-blue',href:'https://www.jobcenter-rnk.de/testseitefw/'},
   {name:'Content Creation',sub:'Sony Alpha · DJI · passives Einkommen',icon:'ti-video',type:'tile-green',href:'https://www.instagram.com/palimaplim'},
@@ -856,10 +898,10 @@ function makeTile(data,key,grid){
       <input class="ep-sub" placeholder="Untertitel" value="${data.sub||''}" style="width:100%;font-size:11px;background:#0f1923;color:#c8e8e4;border:0.5px solid rgba(126,206,196,0.2);border-radius:4px;padding:4px 6px;margin-bottom:4px;font-family:inherit;">
       <select class="ep-type" style="width:100%;font-size:11px;background:#0f1923;color:#7ecec4;border:0.5px solid rgba(126,206,196,0.2);border-radius:4px;padding:4px 6px;margin-bottom:4px;font-family:inherit;">
         <option value="">Standard</option>
-        <option value="tile-active" ${data.type==='tile-active'?'selected':''}>Aktiv</option>
+        <option value="tile-idea" ${data.type==='tile-idea'?'selected':''}>Idee</option>
         <option value="tile-urgent" ${data.type==='tile-urgent'?'selected':''}>Dringend</option>
-        <option value="tile-green" ${data.type==='tile-green'?'selected':''}>Grün</option>
-        <option value="tile-blue" ${data.type==='tile-blue'?'selected':''}>Blau (BAQ)</option>
+        <option value="tile-green" ${data.type==='tile-green'?'selected':''}>Laufend</option>
+        <option value="tile-blue" ${data.type==='tile-blue'?'selected':''}>BAQ</option>
       </select>
       <input class="ep-href" placeholder="URL" value="${data.href||''}" style="width:100%;font-size:11px;background:#0f1923;color:#c8e8e4;border:0.5px solid rgba(126,206,196,0.2);border-radius:4px;padding:4px 6px;margin-bottom:6px;font-family:inherit;">
       <button onclick="applyTileEdit(this)" style="width:100%;font-size:11px;background:rgba(126,206,196,0.1);color:#7ecec4;border:0.5px solid rgba(126,206,196,0.3);border-radius:4px;padding:4px;cursor:pointer;font-family:inherit;">Übernehmen</button>
