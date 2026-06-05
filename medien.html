@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medien · Florian</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%230f2318'/><rect x='10' y='9' width='4' height='14' rx='1.5' fill='%235ab870'/><rect x='18' y='9' width='4' height='14' rx='1.5' fill='%235ab870'/></svg>">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #0f1923;
+  min-height: 100vh;
+  padding: 2rem 1.5rem 3rem;
+}
+.page { max-width: 960px; margin: 0 auto; }
+.header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 0.5px solid rgba(255,255,255,0.1); }
+.back { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #5ab870; text-decoration: none; flex-shrink: 0; }
+.back:hover { color: #7ecec4; }
+.header-text h1 { font-size: 18px; font-weight: 500; color: #e8f4f2; }
+.header-text p { font-size: 13px; color: #7a9e99; margin-top: 3px; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-top: 1.25rem; margin-bottom: 8px; }
+.section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #3a6a64; }
+.section-hint { font-size: 11px; color: #2a4a44; }
+.add-row { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+.add-input { flex: 1; font-size: 13px; padding: 7px 10px; background: #0f1923; color: #c8e8e4; border: 0.5px solid rgba(126,206,196,0.2); border-radius: 8px; font-family: inherit; min-width: 120px; }
+.add-input::placeholder { color: #3a6a64; }
+.add-input:focus { outline: none; border-color: rgba(126,206,196,0.4); }
+.add-btn { font-size: 13px; padding: 7px 12px; background: transparent; color: #7ecec4; border: 0.5px solid rgba(126,206,196,0.3); border-radius: 8px; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.add-btn:hover { background: rgba(126,206,196,0.08); }
+#media-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1rem; }
+@media (max-width: 600px) { #media-grid { grid-template-columns: repeat(2, 1fr); } body { padding: 1.25rem 1rem 2rem; } }
+
+.filter-bar { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+.filter-btn { font-size:11px; padding:5px 12px; border-radius:20px; border:0.5px solid rgba(126,206,196,0.2); background:transparent; color:#5a8a84; cursor:pointer; font-family:inherit; transition:all 0.15s; white-space:nowrap; }
+.filter-btn:hover { border-color:rgba(126,206,196,0.4); color:#7ecec4; }
+.filter-btn.active { background:rgba(126,206,196,0.12); border-color:rgba(126,206,196,0.5); color:#7ecec4; }
+.filter-btn-sub { margin-left:8px; font-size:10px; padding:4px 10px; border-color:rgba(126,206,196,0.15); color:#4a7a74; }
+.filter-btn-sub.active { background:rgba(126,206,196,0.1); border-color:rgba(126,206,196,0.4); color:#7ecec4; }
+
+/* Tile-Wrapper: KEIN overflow:hidden hier — der kommt auf .tile-inner */
+.mtw {
+  position: relative;
+  border-radius: 12px;
+  border: 0.5px solid rgba(126,206,196,0.15);
+  background: #162e3a;
+  cursor: default;
+  transition: border-color 0.15s, opacity 0.15s;
+}
+.mtw.drag-over { border-color: #7ecec4; box-shadow: 0 0 0 1px #7ecec4; }
+.mtw.dragging { opacity: 0.3; }
+
+/* Alles INNERHALB hat overflow:hidden */
+.tile-inner {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Drag-Handle: absolut auf dem MTW (nicht tile-inner!) */
+.drag-handle {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 26px;
+  height: 26px;
+  background: rgba(0,0,0,0.6);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  z-index: 20;
+  color: #5a8a84;
+  font-size: 14px;
+  user-select: none;
+}
+.drag-handle:hover { color: #7ecec4; background: rgba(0,0,0,0.8); }
+.drag-handle:active { cursor: grabbing; }
+
+/* Während Drag: iframes/videos blind schalten */
+body.media-dragging .mtw iframe,
+body.media-dragging .mtw video {
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <a class="back" href="index.html"><i class="ti ti-arrow-left"></i> Zurück</a>
+    <div class="header-text">
+      <h1>Medien</h1>
+      <p>Gesundheit · Bewegung · Tschechisch · Inspiration</p>
+    </div>
+  </div>
+
+  <div class="filter-bar" id="filter-bar"></div>
+  <div class="section-header">
+    <div class="section-label">Alle Medien</div>
+    <div class="section-hint">Bilder · Videos · Motivation</div>
+  </div>
+  <div id="media-grid"></div>
+  <div class="add-row">
+    <input class="add-input" id="media-input-title" placeholder="Titel..." style="max-width:160px;">
+    <input class="add-input" id="media-input-sub" placeholder="Untertitel...">
+    <input class="add-input" id="media-input-url" placeholder="YouTube-URL (oder leer für Upload)">
+    <select class="add-input" id="media-input-cat">
+      <option value="flow">FLOW</option>
+      <option value="lernen-cz">Lernen CZ</option>
+      <option value="lernen">Lernen</option>
+      <option value="politik">Politik</option>
+      <option value="fun">Fun</option>
+      <option value="food">Food</option>
+      <option value="workout">Workout</option>
+      <option value="wo-brust">WO Brust</option>
+      <option value="wo-beine">WO Beine</option>
+      <option value="wo-bauch">WO Bauch</option>
+      <option value="wo-bizeps">WO Bizeps</option>
+      <option value="wo-trizeps">WO Trizeps</option>
+      <option value="wo-ruecken">WO Rücken</option>
+      <option value="sonstiges" selected>Sonstiges</option>
+    </select>
+    <button class="add-btn" onclick="addMediaTile()"><i class="ti ti-plus"></i> Hinzufügen</button>
+  </div>
+  <input type="file" id="media-file-input" accept="image/*,video/*" style="display:none;">
+
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSy8Ic9ZS5m8OZBLb08GX_gjJEHGvX2I1Fnw",
+  authDomain: "schnapsfass-startseite.firebaseapp.com",
+  databaseURL: "https://schnapsfass-startseite-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "schnapsfass-startseite",
+  storageBucket: "schnapsfass-startseite.firebasestorage.app",
+  messagingSenderId: "254731670485",
+  appId: "1:254731670485:web:5257f3582ac581e485a35c"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+window.fbSet = (path, val) => set(ref(db, path), val);
+window.fbListen = (path, cb) => onValue(ref(db, path), snap => cb(snap.val()));
+
+const MEDIA_FB_PATH = 'media/tiles';
+const CLOUDINARY_CLOUD = 'dg5egdnfn';
+const CLOUDINARY_PRESET = 'siwfipe9';
+const PAGE_CONTEXT = 'medien';
+const CATEGORIES = ['alle','flow','lernen-cz','lernen','politik','fun','food','workout','wo-brust','wo-beine','wo-bauch','wo-bizeps','wo-trizeps','wo-ruecken','sonstiges'];
+const CAT_LABELS = {alle:'Alle',flow:'FLOW','lernen-cz':'Lernen CZ',lernen:'Lernen',politik:'Politik',fun:'Fun',food:'Food',workout:'Workout',sonstiges:'Sonstiges','wo-brust':'Brust','wo-beine':'Beine','wo-bauch':'Bauch','wo-bizeps':'Bizeps','wo-trizeps':'Trizeps','wo-ruecken':'Rücken'};
+const WORKOUT_SUBS = ['wo-brust','wo-beine','wo-bauch','wo-bizeps','wo-trizeps','wo-ruecken'];
+let workoutOpen = false;
+
+const urlParams = new URLSearchParams(window.location.search);
+let activeFilter = urlParams.get('filter') || 'alle';
+const FILTER_ALIASES = {'tschechisch':'lernen-cz','gesundheit':'flow','workout':'workout'};
+if (FILTER_ALIASES[activeFilter]) activeFilter = FILTER_ALIASES[activeFilter];
+if (!CATEGORIES.includes(activeFilter)) activeFilter = 'alle';
+
+function renderFilterBar() {
+  const bar = document.getElementById('filter-bar');
+  if (!bar) return;
+  bar.innerHTML = '';
+  const topCats = ['alle','flow','lernen-cz','lernen','politik','fun','food','workout','sonstiges'];
+  topCats.forEach(cat => {
+    const btn = document.createElement('button');
+    const isWorkoutActive = cat === 'workout' && (activeFilter === 'workout' || WORKOUT_SUBS.includes(activeFilter));
+    btn.className = 'filter-btn' + (cat === activeFilter || isWorkoutActive ? ' active' : '');
+    btn.textContent = CAT_LABELS[cat] + (cat === 'workout' ? (workoutOpen ? ' ▲' : ' ▼') : '');
+    btn.onclick = () => {
+      if (cat === 'workout') {
+        workoutOpen = !workoutOpen;
+        if (!workoutOpen && WORKOUT_SUBS.includes(activeFilter)) activeFilter = 'workout';
+        if (workoutOpen && activeFilter !== 'workout' && !WORKOUT_SUBS.includes(activeFilter)) activeFilter = 'workout';
+      } else {
+        activeFilter = cat;
+        workoutOpen = false;
+      }
+      renderFilterBar();
+      renderMediaGrid();
+    };
+    bar.appendChild(btn);
+    if (cat === 'workout' && workoutOpen) {
+      WORKOUT_SUBS.forEach(sub => {
+        const subBtn = document.createElement('button');
+        subBtn.className = 'filter-btn filter-btn-sub' + (sub === activeFilter ? ' active' : '');
+        subBtn.textContent = CAT_LABELS[sub];
+        subBtn.onclick = () => { activeFilter = sub; renderFilterBar(); renderMediaGrid(); };
+        bar.appendChild(subBtn);
+      });
+    }
+  });
+}
+
+let mediaTiles = [];
+let pendingUploadTileId = null;
+let mediaDragSrc = null;
+
+window.ytIdFromUrl = function(url) {
+  const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{11})/);
+  return m ? m[1] : null;
+};
+
+window.makeMediaTile = function(tile, idx) {
+  // Äußerer Wrapper: KEIN overflow:hidden — damit der Drag-Handle nicht abgeschnitten wird
+  const wrap = document.createElement('div');
+  wrap.className = 'mtw';
+  wrap.dataset.realidx = idx;
+  wrap.dataset.tileid = tile.id || idx;
+
+  // Drag-Handle — absolut auf dem wrap, außerhalb von tile-inner
+  const handle = document.createElement('div');
+  handle.className = 'drag-handle';
+  handle.innerHTML = '<i class="ti ti-grip-vertical"></i>';
+  handle.title = 'Verschieben';
+  handle.draggable = true;
+  handle.addEventListener('dragstart', e => {
+    mediaDragSrc = wrap;
+    setTimeout(() => wrap.classList.add('dragging'), 0);
+    document.body.classList.add('media-dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', idx); // Chrome braucht das
+  });
+  handle.addEventListener('dragend', () => {
+    wrap.classList.remove('dragging');
+    document.body.classList.remove('media-dragging');
+    document.querySelectorAll('.mtw').forEach(w => w.classList.remove('drag-over'));
+    mediaDragSrc = null;
+  });
+  wrap.appendChild(handle);
+
+  // Innerer Container: hat overflow:hidden für die Medien
+  const inner = document.createElement('div');
+  inner.className = 'tile-inner';
+
+  // Medienbereich
+  const media = document.createElement('div');
+  media.style.cssText = 'position:relative;width:100%;padding-bottom:100%;background:#0f1923;overflow:hidden;';
+
+  if (tile.type === 'youtube' && tile.url) {
+    const ytId = ytIdFromUrl(tile.url) || tile.url;
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube.com/embed/${ytId}`;
+    iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none;';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+    iframe.allowFullscreen = true;
+    iframe.loading = 'lazy';
+    media.appendChild(iframe);
+  } else if (tile.type === 'image' && tile.url) {
+    const img = document.createElement('img');
+    img.src = tile.url;
+    img.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;';
+    media.appendChild(img);
+  } else if (tile.type === 'video' && tile.url) {
+    const vid = document.createElement('video');
+    vid.src = tile.url;
+    vid.controls = true;
+    vid.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;';
+    media.appendChild(vid);
+  } else {
+    const ph = document.createElement('div');
+    ph.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#3a6a64;font-size:11px;cursor:pointer;';
+    ph.innerHTML = '<i class="ti ti-photo-plus" style="font-size:28px;color:#2a5a54;"></i><span>Klicken zum Hinzufügen</span>';
+    ph.onclick = (e) => {
+      e.stopPropagation();
+      pendingUploadTileId = tile.id || idx;
+      document.getElementById('media-file-input').value = '';
+      document.getElementById('media-file-input').click();
+    };
+    media.appendChild(ph);
+  }
+  inner.appendChild(media);
+
+  // Info
+  const info = document.createElement('div');
+  info.style.cssText = 'padding:8px 10px 6px;';
+  info.innerHTML = `<div style="font-size:12px;font-weight:500;color:#c8e8e4;line-height:1.3;">${tile.title||''}</div>${tile.sub?`<div style="font-size:10px;color:#4a8a84;margin-top:2px;">${tile.sub}</div>`:''}`;
+  inner.appendChild(info);
+
+  // Edit-Button
+  const editBtnWrap = document.createElement('div');
+  editBtnWrap.style.cssText = 'position:absolute;top:6px;right:6px;display:flex;gap:4px;z-index:20;';
+  editBtnWrap.innerHTML = `<button title="Bearbeiten" style="width:22px;height:22px;background:rgba(0,0,0,0.6);border:none;border-radius:5px;color:#7ecec4;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;" onclick="toggleMediaEdit(${idx})"><i class="ti ti-edit"></i></button>`;
+  wrap.appendChild(editBtnWrap);
+
+  // Edit-Panel (innerhalb inner, damit border-radius stimmt)
+  const panel = document.createElement('div');
+  panel.className = 'media-edit-panel';
+  panel.style.cssText = 'display:none;padding:8px 10px;border-top:0.5px solid rgba(126,206,196,0.15);background:#0f1923;';
+  panel.innerHTML = `
+    <input class="mep-title add-input" placeholder="Titel" value="${tile.title||''}" style="width:100%;margin-bottom:4px;font-size:11px;padding:4px 6px;">
+    <input class="mep-sub add-input" placeholder="Untertitel / Nächster Schritt" value="${tile.sub||''}" style="width:100%;margin-bottom:4px;font-size:11px;padding:4px 6px;">
+    <input class="mep-url add-input" placeholder="YouTube-URL oder leer für Datei-Upload" value="${tile.url||''}" style="width:100%;margin-bottom:4px;font-size:11px;padding:4px 6px;">
+    <select class="mep-cat add-input" style="width:100%;margin-bottom:4px;font-size:11px;padding:4px 6px;">
+      ${['flow','lernen-cz','lernen','politik','fun','food','workout','wo-brust','wo-beine','wo-bauch','wo-bizeps','wo-trizeps','wo-ruecken','sonstiges'].map(c=>`<option value="${c}" ${tile.category===c?'selected':''}>${c.charAt(0).toUpperCase()+c.slice(1)}</option>`).join('')}
+    </select>
+    <div style="font-size:10px;color:#4a8a84;margin-bottom:6px;">Sichtbar auf:
+      <label style="margin-left:6px;cursor:pointer;"><input type="checkbox" class="mep-page-start" ${(!tile.pages||tile.pages.includes('startseite'))?'checked':''}> Startseite</label>
+      <label style="margin-left:8px;cursor:pointer;"><input type="checkbox" class="mep-page-ges" ${(!tile.pages||tile.pages.includes('medien'))?'checked':''}> Medien</label>
+    </div>
+    <button onclick="applyMediaEdit(${idx},this)" style="width:100%;font-size:11px;background:rgba(126,206,196,0.1);color:#7ecec4;border:0.5px solid rgba(126,206,196,0.3);border-radius:4px;padding:4px;cursor:pointer;font-family:inherit;margin-bottom:4px;">Übernehmen</button>
+    <button onclick="uploadMediaFile(${idx})" style="width:100%;font-size:11px;background:rgba(60,140,220,0.1);color:#5aa8e8;border:0.5px solid rgba(60,140,220,0.3);border-radius:4px;padding:4px;cursor:pointer;font-family:inherit;margin-bottom:4px;">Datei hochladen</button>
+    <button onclick="deleteMediaTile(${idx})" style="width:100%;font-size:11px;background:rgba(200,80,60,0.1);color:#c8503c;border:0.5px solid rgba(200,80,60,0.3);border-radius:4px;padding:4px;cursor:pointer;font-family:inherit;">Kachel löschen</button>
+  `;
+  inner.appendChild(panel);
+  wrap.appendChild(inner);
+
+  // Drop-Events auf dem wrap
+  wrap.addEventListener('dragover', e => {
+    if (!mediaDragSrc || mediaDragSrc === wrap) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    wrap.classList.add('drag-over');
+  });
+  wrap.addEventListener('dragleave', e => {
+    if (!wrap.contains(e.relatedTarget)) wrap.classList.remove('drag-over');
+  });
+  wrap.addEventListener('drop', e => {
+    e.preventDefault();
+    wrap.classList.remove('drag-over');
+    if (!mediaDragSrc || mediaDragSrc === wrap) return;
+    const grid = document.getElementById('media-grid');
+    const allWraps = [...grid.children];
+    const si = allWraps.indexOf(mediaDragSrc);
+    const ti = allWraps.indexOf(wrap);
+    if (si < 0 || ti < 0) return;
+    if (si < ti) grid.insertBefore(mediaDragSrc, wrap.nextSibling);
+    else grid.insertBefore(mediaDragSrc, wrap);
+    commitMediaOrder(grid);
+  });
+
+  return wrap;
+};
+
+window.renderMediaGrid = function() {
+  const grid = document.getElementById('media-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const visible = mediaTiles.filter(t => {
+    const onPage = !t.pages || t.pages.includes(PAGE_CONTEXT);
+    const inCat = activeFilter === 'alle' || t.category === activeFilter;
+    return onPage && inCat;
+  });
+  visible.forEach(tile => {
+    const realIdx = mediaTiles.indexOf(tile);
+    grid.appendChild(makeMediaTile(tile, realIdx));
+  });
+};
+
+window.toggleMediaEdit = function(idx) {
+  const grid = document.getElementById('media-grid');
+  const wrap = [...grid.querySelectorAll('.mtw')].find(w => parseInt(w.dataset.realidx) === idx);
+  if (!wrap) return;
+  const panel = wrap.querySelector('.media-edit-panel');
+  if (!panel) return;
+  const allPanels = grid.querySelectorAll('.media-edit-panel');
+  const isOpen = panel.style.display !== 'none';
+  allPanels.forEach(p => { p.style.display='none'; p.dataset.open='0'; });
+  if (!isOpen) { panel.style.display='block'; panel.dataset.open='1'; }
+};
+
+window.applyMediaEdit = function(idx, btn) {
+  idx = parseInt(idx);
+  const panel = btn.closest('.media-edit-panel');
+  const title = panel.querySelector('.mep-title').value.trim();
+  const sub = panel.querySelector('.mep-sub').value.trim();
+  const url = panel.querySelector('.mep-url').value.trim();
+  const pageStart = panel.querySelector('.mep-page-start').checked;
+  const pageGes = panel.querySelector('.mep-page-ges').checked;
+  const category = panel.querySelector('.mep-cat').value;
+  const pages = [...(pageStart?['startseite']:[]), ...(pageGes?['medien']:[])];
+  if (!pages.length) pages.push('medien');
+  let type = (mediaTiles[idx] && mediaTiles[idx].type) || 'image';
+  if (url) {
+    if (ytIdFromUrl(url)) type = 'youtube';
+    else if (/\.(mp4|webm|mov)/i.test(url)) type = 'video';
+    else type = 'image';
+  }
+  if (!mediaTiles[idx]) mediaTiles[idx] = {};
+  mediaTiles[idx] = { ...mediaTiles[idx], title, sub, url, type, pages, category };
+  saveMediaTiles();
+  renderMediaGrid();
+};
+
+window.uploadMediaFile = function(idx) {
+  const tile = mediaTiles[idx];
+  pendingUploadTileId = (tile && tile.id) ? tile.id : idx;
+  document.getElementById('media-file-input').value = '';
+  document.getElementById('media-file-input').click();
+};
+
+window.deleteMediaTile = function(idx) {
+  mediaTiles.splice(idx, 1);
+  saveMediaTiles();
+  renderMediaGrid();
+};
+
+window.addMediaTile = function() {
+  const title = document.getElementById('media-input-title').value.trim();
+  const sub = document.getElementById('media-input-sub').value.trim();
+  const url = document.getElementById('media-input-url').value.trim();
+  if (!title && !url) return;
+  let type = 'image';
+  if (url && ytIdFromUrl(url)) type = 'youtube';
+  else if (url && /\.(mp4|webm|mov)/i.test(url)) type = 'video';
+  const addCat = document.getElementById('media-input-cat')?.value || 'sonstiges';
+  const newId = Date.now() + Math.random().toString(36).slice(2,6);
+  mediaTiles.push({ id: newId, title, sub, url, type, pages: ['medien'], category: addCat });
+  saveMediaTiles();
+  renderMediaGrid();
+  document.getElementById('media-input-title').value = '';
+  document.getElementById('media-input-sub').value = '';
+  document.getElementById('media-input-url').value = '';
+};
+
+document.getElementById('media-file-input').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const tileId = pendingUploadTileId;
+  const isVideo = file.type.startsWith('video/');
+  const resourceType = isVideo ? 'video' : 'image';
+  const endpoint = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${resourceType}/upload`;
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_PRESET);
+  formData.append('folder', 'startseite/media');
+  try {
+    const res = await fetch(endpoint, { method: 'POST', body: formData });
+    const data = await res.json();
+    if (!data.secure_url) throw new Error('Upload fehlgeschlagen');
+    const type = isVideo ? 'video' : 'image';
+    const tileIdx = mediaTiles.findIndex(t => t.id === tileId || mediaTiles.indexOf(t) === tileId);
+    if (tileIdx !== -1) {
+      mediaTiles[tileIdx] = { ...mediaTiles[tileIdx], url: data.secure_url, public_id: data.public_id, type };
+    } else {
+      mediaTiles.push({ id: Date.now().toString(), title: file.name, sub: '', url: data.secure_url, public_id: data.public_id, type, pages: ['medien'] });
+    }
+    saveMediaTiles();
+    renderMediaGrid();
+  } catch(err) {
+    alert('Upload fehlgeschlagen. Bei Videos: Cloudinary-Preset auf resource_type "auto" stellen.');
+    renderMediaGrid();
+  }
+  pendingUploadTileId = null;
+});
+
+function commitMediaOrder(grid) {
+  const visibleWraps = [...grid.children];
+  const visibleRealIdxs = visibleWraps.map(w => parseInt(w.dataset.realidx));
+  const reordered = visibleRealIdxs.map(i => mediaTiles[i]);
+  const hiddenTiles = mediaTiles.filter((t, i) => !visibleRealIdxs.includes(i));
+  mediaTiles = [...reordered, ...hiddenTiles];
+  saveMediaTiles();
+}
+
+function saveMediaTiles() {
+  set(ref(db, MEDIA_FB_PATH), mediaTiles.length ? mediaTiles : null);
+}
+
+onValue(ref(db, MEDIA_FB_PATH), (snap) => {
+  const val = snap.val();
+  mediaTiles = val ? (Array.isArray(val) ? val : Object.values(val)) : [];
+  let needsSave = false;
+  mediaTiles.forEach(t => { if (!t.id) { t.id = Date.now() + Math.random().toString(36).slice(2,6); needsSave = true; } });
+  if (needsSave) saveMediaTiles();
+  renderFilterBar();
+  renderMediaGrid();
+});
+
+</script>
+</body>
+</html>
